@@ -1,0 +1,30 @@
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Keys & Sensitive Data (Keep user keys private)
+users/*/*.pem
+!users/.gitkeep
+
+# Output Binary Files & Signatures (Generated files)
+files/*.bin
+files/*.sig
+files/decrypted_*
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+
+# Application Log files
+*.log
+app.log

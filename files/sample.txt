@@ -1,0 +1,7 @@
+=====================================================
+   DIGITAL SECURE FILE SHARING DEMO SAMPLE FILE
+=====================================================
+This is confidential project documentation for User B.
+Encryption: AES-256-GCM + RSA-4096 Hybrid Cryptography.
+Digital Signature: SHA-256 with RSA-PSS Padding.
+Created for Cybersecurity Internship Project.
