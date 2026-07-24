@@ -1,0 +1,23 @@
+[2026-07-22 10:24:16] [INFO] [SecureFileSharing]: Generating 4096-bit RSA key pair...
+[2026-07-22 10:24:20] [INFO] [SecureFileSharing]: Successfully generated 4096-bit RSA key pair.
+[2026-07-22 10:24:20] [INFO] [SecureFileSharing]: Saved Private Key to: D:\project internship\users\user_a\private_key.pem
+[2026-07-22 10:24:20] [INFO] [SecureFileSharing]: Saved Public Key to: D:\project internship\users\user_a\public_key.pem
+[2026-07-22 10:24:20] [INFO] [SecureFileSharing]: Key exchange profile initialized for user 'user_a' (4096-bit RSA).
+[2026-07-22 10:24:20] [INFO] [SecureFileSharing]: Generating 4096-bit RSA key pair...
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Successfully generated 4096-bit RSA key pair.
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Saved Private Key to: D:\project internship\users\user_b\private_key.pem
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Saved Public Key to: D:\project internship\users\user_b\public_key.pem
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Key exchange profile initialized for user 'user_b' (4096-bit RSA).
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Sample file created at: D:\project internship\files\sample.txt
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Starting encryption for file: D:\project internship\files\sample.txt
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Loading recipient public key from: D:\project internship\users\user_b\public_key.pem
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Successfully encrypted file -> D:\project internship\files\encrypted.bin
+[2026-07-22 10:24:22] [INFO] [SecureFileSharing]: Generating digital signature for file: D:\project internship\files\sample.txt
+[2026-07-22 10:24:23] [INFO] [SecureFileSharing]: Digital signature created successfully -> D:\project internship\files\signature.sig
+[2026-07-22 10:24:23] [INFO] [SecureFileSharing]: Starting decryption for file: D:\project internship\files\encrypted.bin
+[2026-07-22 10:24:23] [INFO] [SecureFileSharing]: Loading recipient private key from: D:\project internship\users\user_b\private_key.pem
+[2026-07-22 10:24:24] [INFO] [SecureFileSharing]: Successfully decrypted file -> D:\project internship\files\decrypted.txt
+[2026-07-22 10:24:24] [INFO] [SecureFileSharing]: Verifying signature for file: D:\project internship\files\decrypted.txt
+[2026-07-22 10:24:24] [INFO] [SecureFileSharing]: ✅ Digital signature VERIFIED successfully. File authenticity guaranteed.
+[2026-07-22 10:24:24] [INFO] [SecureFileSharing]: Verifying signature for file: D:\project internship\files\tampered.txt
+[2026-07-22 10:24:24] [WARNING] [SecureFileSharing]: ❌ Digital signature VERIFICATION FAILED! Signature does not match or file has been tampered with.
