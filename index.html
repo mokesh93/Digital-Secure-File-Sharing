@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Secure File Sharing | RSA-4096 + AES-256 Web Edition</title>
-    <meta name="description" content="A web-based interactive demonstration of RSA-4096 and AES-256-GCM hybrid cryptography file sharing with digital signatures.">
+    <title>Digital Secure File Sharing | RSA-4096 + AES-256 Dual User Portal</title>
+    <meta name="description" content="Split-screen side-by-side interactive simulation of RSA-4096 and AES-256-GCM hybrid file sharing with digital signatures.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0f111a;
-            --card-bg: rgba(26, 29, 45, 0.7);
+            --card-bg: rgba(26, 29, 45, 0.75);
             --card-border: rgba(255, 255, 255, 0.08);
             --text-primary: #e6edf3;
             --text-secondary: #8b949e;
@@ -38,18 +38,18 @@
                 radial-gradient(circle at 85% 85%, rgba(188, 140, 255, 0.08) 0%, transparent 40%);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1280px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.5rem;
         }
 
         header h1 {
@@ -58,19 +58,19 @@
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         header p {
             color: var(--text-secondary);
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
 
         .badges {
             display: flex;
             justify-content: center;
             gap: 0.75rem;
-            margin-top: 1rem;
+            margin-top: 0.75rem;
             flex-wrap: wrap;
         }
 
@@ -129,7 +129,7 @@
             backdrop-filter: blur(16px);
             border: 1px solid var(--card-border);
             border-radius: var(--radius);
-            padding: 2rem;
+            padding: 1.75rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             animation: fadeIn 0.3s ease;
         }
@@ -143,52 +143,109 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .grid-2 {
+        /* Split Screen Layout */
+        .split-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 1rem;
+            align-items: start;
         }
 
-        @media (max-width: 768px) {
-            .grid-2 { grid-template-columns: 1fr; }
+        @media (max-width: 900px) {
+            .split-grid { grid-template-columns: 1fr; }
+            .transfer-pipe { display: none; }
         }
 
-        .user-card {
-            background: rgba(15, 17, 26, 0.6);
+        .user-panel {
+            background: rgba(15, 17, 26, 0.7);
             border: 1px solid var(--card-border);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 1.25rem;
+            position: relative;
         }
 
-        .user-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
+        .user-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .user-title {
+            font-size: 1.15rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .user-a-title { color: var(--accent-green); }
-        .user-b-title { color: var(--accent-yellow); }
+        .user-a-color { color: var(--accent-green); }
+        .user-b-color { color: var(--accent-yellow); }
+
+        .key-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            background: rgba(63, 185, 80, 0.15);
+            border: 1px solid rgba(63, 185, 80, 0.4);
+            color: var(--accent-green);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: var(--text-secondary);
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 0.65rem 0.8rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
 
         .btn {
             background: linear-gradient(135deg, #238636, #2ea043);
             color: #ffffff;
             border: none;
-            padding: 0.75rem 1.25rem;
+            padding: 0.7rem 1.1rem;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
         }
 
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #8957e5, #bc8cff);
+            color: #ffffff;
         }
 
         .btn-secondary {
@@ -201,37 +258,48 @@
             background: #30363d;
         }
 
-        .btn-purple {
-            background: linear-gradient(135deg, #8957e5, #bc8cff);
-            color: #ffffff;
+        /* Transfer Pipe Animation */
+        .transfer-pipe {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 250px;
         }
 
-        .form-group {
-            margin-bottom: 1.25rem;
+        .arrow-icon {
+            font-size: 1.8rem;
+            color: var(--accent-purple);
+            animation: pulseArrow 1.5s infinite ease-in-out;
         }
 
-        .form-group label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
+        @keyframes pulseArrow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 10px var(--accent-purple)); }
         }
 
-        input[type="text"], textarea, select {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-primary);
-            padding: 0.75rem;
+        .packet-indicator {
+            font-size: 0.7rem;
+            color: var(--accent-blue);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Packet Box */
+        .package-box {
+            background: #0d1117;
+            border: 1px dashed var(--accent-purple);
             border-radius: 8px;
+            padding: 0.8rem;
             font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
+            font-size: 0.78rem;
+            color: #a5d6ff;
+            word-break: break-all;
+            margin-top: 0.5rem;
         }
 
         /* Status & Logs */
@@ -239,9 +307,9 @@
             background: #0d1117;
             border: 1px solid var(--card-border);
             border-radius: 8px;
-            padding: 1.25rem;
+            padding: 1rem;
             font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #a5d6ff;
             max-height: 380px;
             overflow-y: auto;
@@ -268,10 +336,10 @@
         .log-error { color: #f85149; }
 
         .alert {
-            padding: 1rem;
+            padding: 0.85rem;
             border-radius: 8px;
             margin-bottom: 1rem;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -295,14 +363,13 @@
             color: #f85149;
         }
 
-        /* Footer */
         footer {
-            margin-top: 3rem;
+            margin-top: 2rem;
             text-align: center;
             color: var(--text-secondary);
             font-size: 0.85rem;
             border-top: 1px solid var(--card-border);
-            padding-top: 1.5rem;
+            padding-top: 1.25rem;
         }
     </style>
 </head>
@@ -313,32 +380,115 @@
         <h1>🔐 Digital Secure File Sharing</h1>
         <p>RSA-4096 + AES-256-GCM Hybrid Cryptography & Digital Signature Web Portal</p>
         <div class="badges">
+            <span class="badge">Split-Screen Dual User Transfer</span>
             <span class="badge">RSA-4096 Key Exchange</span>
             <span class="badge">AES-256-GCM Authenticated Encryption</span>
             <span class="badge">SHA-256 + RSA-PSS Signatures</span>
-            <span class="badge">Dynamic Sender & Recipient Roles</span>
         </div>
     </header>
 
     <!-- Navigation Tabs -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('keys')">🔑 1. Key Management</button>
-        <button class="tab-btn" onclick="switchTab('encrypt')">🔒 2. Encrypt & Sign</button>
-        <button class="tab-btn" onclick="switchTab('decrypt')">🔓 3. Decrypt & Verify</button>
-        <button class="tab-btn" onclick="switchTab('logs')">📜 4. Security Audit Logs</button>
+        <button class="tab-btn active" onclick="switchTab('split')">⚡ 1. Split-Screen Dual User View</button>
+        <button class="tab-btn" onclick="switchTab('keys')">🔑 2. Key Management</button>
+        <button class="tab-btn" onclick="switchTab('encrypt')">🔒 3. Manual Encrypt & Sign</button>
+        <button class="tab-btn" onclick="switchTab('decrypt')">🔓 4. Manual Decrypt & Verify</button>
+        <button class="tab-btn" onclick="switchTab('logs')">📜 5. Security Audit Logs</button>
     </div>
 
-    <!-- TAB 1: Key Management -->
-    <div id="tab-keys" class="tab-content active">
+    <!-- TAB 1: SPLIT-SCREEN DUAL USER SIMULATION (MAIN DEMO) -->
+    <div id="tab-split" class="tab-content active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+                <h2>Side-by-Side Dual User Interactive Simulation</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    Send encrypted & signed files in real-time between User A and User B.
+                </p>
+            </div>
+            <button class="btn btn-secondary" style="width: auto;" onclick="swapTransferRoles()">
+                🔄 Swap Sender & Recipient Roles
+            </button>
+        </div>
+
+        <div class="split-grid">
+            <!-- LEFT PANEL: SENDER -->
+            <div class="user-panel" id="panel-sender">
+                <div class="user-header">
+                    <div class="user-title user-a-color" id="sender-title">
+                        👤 User A (Sender)
+                    </div>
+                    <span class="key-badge" id="sender-key-badge">🟢 RSA-4096 Active</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Target Recipient:</label>
+                    <input type="text" id="split-recipient-name" readonly value="User B (RSA-4096 Public Key)">
+                </div>
+
+                <div class="form-group">
+                    <label>Secret Message / Payload to Send:</label>
+                    <textarea id="split-send-text" placeholder="Type confidential file content here...">CONFIDENTIAL INTERNSHIP DEMO: This payload is encrypted with AES-256-GCM. The AES key is wrapped using User B's 4096-bit RSA public key, and signed with User A's private key.</textarea>
+                </div>
+
+                <button class="btn btn-purple" onclick="sendSplitPackage()">
+                    🔒 Encrypt & Send Securely ➔
+                </button>
+
+                <div id="split-sent-status" style="margin-top: 1rem; display: none;">
+                    <div class="alert alert-success" style="font-size: 0.8rem; padding: 0.6rem;">
+                        ✅ Sent Encrypted Package & RSA-PSS Signature to Recipient inbox!
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLE TRANSFER PIPE -->
+            <div class="transfer-pipe">
+                <div class="arrow-icon">➔</div>
+                <div class="packet-indicator">AES-256 + RSA-4096</div>
+            </div>
+
+            <!-- RIGHT PANEL: RECIPIENT -->
+            <div class="user-panel" id="panel-recipient">
+                <div class="user-header">
+                    <div class="user-title user-b-color" id="recipient-title">
+                        👤 User B (Recipient)
+                    </div>
+                    <span class="key-badge" id="recipient-key-badge">🟢 RSA-4096 Active</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Incoming Encrypted Package Queue:</label>
+                    <div id="split-package-preview" class="package-box">
+                        [No package received yet. Click 'Encrypt & Send' on left panel]
+                    </div>
+                </div>
+
+                <button class="btn" id="btn-split-decrypt" onclick="decryptSplitPackage()" disabled style="opacity: 0.6;">
+                    🔓 Decrypt & Verify Signature
+                </button>
+
+                <div id="split-dec-result" style="margin-top: 1rem; display: none;">
+                    <div id="split-verification-badge"></div>
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label>Decrypted Plaintext Output:</label>
+                        <textarea id="split-dec-output" readonly style="min-height: 80px;"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: KEY MANAGEMENT -->
+    <div id="tab-keys" class="tab-content">
         <h2 style="margin-bottom: 1rem;">RSA-4096 User Profiles & Key Exchange</h2>
         <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
             Generate high-entropy 4096-bit RSA key pairs for User A and User B directly inside your browser.
         </p>
 
-        <div class="grid-2">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <!-- User A -->
-            <div class="user-card">
-                <h3 class="user-a-title">👤 User A Profile</h3>
+            <div class="user-panel">
+                <h3 class="user-a-color" style="margin-bottom: 0.75rem;">👤 User A Profile</h3>
                 <div class="form-group">
                     <label>RSA Public Key (Shareable):</label>
                     <textarea id="userA-pub" readonly placeholder="Click 'Generate User A Keys' below..."></textarea>
@@ -351,8 +501,8 @@
             </div>
 
             <!-- User B -->
-            <div class="user-card">
-                <h3 class="user-b-title">👤 User B Profile</h3>
+            <div class="user-panel">
+                <h3 class="user-b-color" style="margin-bottom: 0.75rem;">👤 User B Profile</h3>
                 <div class="form-group">
                     <label>RSA Public Key (Shareable):</label>
                     <textarea id="userB-pub" readonly placeholder="Click 'Generate User B Keys' below..."></textarea>
@@ -366,116 +516,100 @@
         </div>
 
         <div style="margin-top: 1.5rem; text-align: center;">
-            <button class="btn" onclick="generateAllKeys()">🚀 Generate / Reset Both Profiles (User A & B)</button>
+            <button class="btn" style="width: auto;" onclick="generateAllKeys()">🚀 Generate / Reset Both Profiles (User A & B)</button>
         </div>
     </div>
 
-    <!-- TAB 2: Encrypt & Sign -->
+    <!-- TAB 3: MANUAL ENCRYPT & SIGN -->
     <div id="tab-encrypt" class="tab-content">
-        <h2 style="margin-bottom: 1rem;">🔒 Hybrid File Encryption & Digital Signature</h2>
-        <div class="alert alert-info">
-            💡 <strong>Dynamic Roles:</strong> Select who is <strong>sending</strong> (signs payload with their Private Key) and who is <strong>receiving</strong> (wraps AES key with their Public Key).
-        </div>
-
-        <div class="grid-2" style="margin-bottom: 1rem;">
+        <h2 style="margin-bottom: 1rem;">🔒 Manual Hybrid File Encryption & Digital Signature</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
             <div class="form-group">
                 <label>📤 Sender (Signing User):</label>
-                <select id="enc-sender-select" onchange="updateEncRoleNotice()">
+                <select id="enc-sender-select">
                     <option value="userA" selected>User A (Uses User A Private Key for Signing)</option>
                     <option value="userB">User B (Uses User B Private Key for Signing)</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>📥 Recipient (Encrypting for User):</label>
-                <select id="enc-recipient-select" onchange="updateEncRoleNotice()">
+                <select id="enc-recipient-select">
                     <option value="userB" selected>User B (Uses User B Public Key for Key Wrapping)</option>
                     <option value="userA">User A (Uses User A Public Key for Key Wrapping)</option>
                 </select>
             </div>
         </div>
 
-        <div id="enc-role-notice" class="alert alert-info" style="font-size: 0.85rem; margin-bottom: 1.25rem;">
-            Sender: <strong>User A</strong> → Recipient: <strong>User B</strong>
-        </div>
-
         <div class="form-group">
             <label>Input Data to Encrypt & Sign:</label>
-            <textarea id="enc-input" style="min-height: 120px;" placeholder="Type secret message or confidential data here...">CONFIDENTIAL INTERNSHIP PROJECT DATA: Secure file payload with AES-256-GCM authenticated encryption and RSA-4096 digital signature.</textarea>
+            <textarea id="enc-input" style="min-height: 110px;">CONFIDENTIAL DATA: Encrypted with AES-256-GCM and signed with RSA-PSS.</textarea>
         </div>
 
-        <button class="btn btn-purple" onclick="performHybridEncryption()">🔒 Encrypt & Sign Payload</button>
+        <button class="btn btn-purple" onclick="performHybridEncryption()" style="width: auto;">🔒 Encrypt & Sign Payload</button>
 
         <div id="enc-results" style="display: none; margin-top: 1.5rem;">
             <h3>Encrypted Package Output:</h3>
             <div class="form-group" style="margin-top: 0.75rem;">
-                <label>Encrypted Package (JSON Format - Key + IV + Ciphertext + Tag):</label>
-                <textarea id="enc-output-json" readonly style="min-height: 110px;"></textarea>
+                <label>Encrypted Package (JSON Format):</label>
+                <textarea id="enc-output-json" readonly style="min-height: 100px;"></textarea>
             </div>
             <div class="form-group">
                 <label>Digital Signature (Base64 RSA-PSS Signature):</label>
-                <textarea id="enc-output-sig" readonly style="min-height: 70px;"></textarea>
+                <textarea id="enc-output-sig" readonly style="min-height: 60px;"></textarea>
             </div>
-            <button class="btn btn-secondary" onclick="copyEncryptedPackage()">📋 Copy Package to Decrypt Tab</button>
         </div>
     </div>
 
-    <!-- TAB 3: Decrypt & Verify -->
+    <!-- TAB 4: MANUAL DECRYPT & VERIFY -->
     <div id="tab-decrypt" class="tab-content">
-        <h2 style="margin-bottom: 1rem;">🔓 File Decryption & Signature Verification</h2>
-        <div class="alert alert-info">
-            💡 <strong>Dynamic Roles:</strong> Select who is <strong>receiving/decrypting</strong> (unwraps AES key with their Private Key) and who <strong>sent</strong> the file (verifies signature with their Public Key).
-        </div>
+        <h2 style="margin-bottom: 1rem;">🔓 Manual File Decryption & Signature Verification</h2>
 
-        <div class="grid-2" style="margin-bottom: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
             <div class="form-group">
-                <label>📥 Recipient / Decryptor (Owns Private Key):</label>
-                <select id="dec-recipient-select" onchange="updateDecRoleNotice()">
+                <label>📥 Recipient (Decrypting User):</label>
+                <select id="dec-recipient-select">
                     <option value="userB" selected>User B (Uses User B Private Key to Decrypt)</option>
                     <option value="userA">User A (Uses User A Private Key to Decrypt)</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>📤 Sender / Signer (Public Key Verifier):</label>
-                <select id="dec-sender-select" onchange="updateDecRoleNotice()">
+                <label>📤 Sender (Signer to Verify):</label>
+                <select id="dec-sender-select">
                     <option value="userA" selected>User A (Uses User A Public Key to Verify Signature)</option>
                     <option value="userB">User B (Uses User B Public Key to Verify Signature)</option>
                 </select>
             </div>
         </div>
 
-        <div id="dec-role-notice" class="alert alert-info" style="font-size: 0.85rem; margin-bottom: 1.25rem;">
-            Decrypting as: <strong>User B</strong> | Verifying signature of: <strong>User A</strong>
-        </div>
-
         <div class="form-group">
             <label>1. Encrypted Package (JSON Format):</label>
-            <textarea id="dec-input-json" style="min-height: 110px;" placeholder="Paste Encrypted Package JSON here..."></textarea>
+            <textarea id="dec-input-json" style="min-height: 100px;" placeholder="Paste Encrypted Package JSON here..."></textarea>
         </div>
 
         <div class="form-group">
             <label>2. Digital Signature (Base64 RSA-PSS Signature):</label>
-            <textarea id="dec-input-sig" style="min-height: 70px;" placeholder="Paste Digital Signature Base64 string here..."></textarea>
+            <textarea id="dec-input-sig" style="min-height: 60px;" placeholder="Paste Digital Signature Base64 string here..."></textarea>
         </div>
 
-        <button class="btn" onclick="performHybridDecryption()">🔓 Decrypt & Verify Signature</button>
+        <button class="btn" onclick="performHybridDecryption()" style="width: auto;">🔓 Decrypt & Verify Signature</button>
 
         <div id="dec-status-box" style="margin-top: 1.5rem;"></div>
 
         <div id="dec-results" style="display: none;">
             <div class="form-group">
                 <label>Decrypted Plaintext Output:</label>
-                <textarea id="dec-output-text" readonly style="min-height: 120px;"></textarea>
+                <textarea id="dec-output-text" readonly style="min-height: 100px;"></textarea>
             </div>
         </div>
     </div>
 
-    <!-- TAB 4: Security Logs -->
+    <!-- TAB 5: SECURITY LOGS -->
     <div id="tab-logs" class="tab-content">
         <h2 style="margin-bottom: 1rem;">📜 Real-Time Security Event Audit Log</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Each security audit event is logged on a separate line below:</p>
         <div id="web-log-box" class="log-box"></div>
-        <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
-            <button class="btn btn-secondary" onclick="clearLogs()">Clear Audit Log</button>
+        <div style="margin-top: 1rem;">
+            <button class="btn btn-secondary" style="width: auto;" onclick="clearLogs()">Clear Audit Log</button>
         </div>
     </div>
 
@@ -486,14 +620,14 @@
 </div>
 
 <script>
-    // In-memory key pairs for User A & User B
+    // Cryptographic keys store for User A & User B
     const keysStore = {
         userA: { encPub: null, encPriv: null, sigPub: null, sigPriv: null, pubPem: '', privPem: '' },
         userB: { encPub: null, encPriv: null, sigPub: null, sigPriv: null, pubPem: '', privPem: '' },
-        lastEncryptedPackage: null,
-        lastSignature: null,
-        lastSender: 'userA',
-        lastRecipient: 'userB'
+        splitCurrentSender: 'userA',
+        splitCurrentRecipient: 'userB',
+        splitPendingPackage: null,
+        splitPendingSignature: null
     };
 
     function logEvent(msg, level = 'INFO') {
@@ -523,18 +657,6 @@
 
         event.target.classList.add('active');
         document.getElementById(`tab-${tabId}`).classList.add('active');
-    }
-
-    function updateEncRoleNotice() {
-        const snd = document.getElementById('enc-sender-select').value === 'userA' ? 'User A' : 'User B';
-        const rec = document.getElementById('enc-recipient-select').value === 'userB' ? 'User B' : 'User A';
-        document.getElementById('enc-role-notice').innerHTML = `Sender: <strong>${snd}</strong> → Recipient: <strong>${rec}</strong>`;
-    }
-
-    function updateDecRoleNotice() {
-        const rec = document.getElementById('dec-recipient-select').value === 'userB' ? 'User B' : 'User A';
-        const snd = document.getElementById('dec-sender-select').value === 'userA' ? 'User A' : 'User B';
-        document.getElementById('dec-role-notice').innerHTML = `Decrypting as: <strong>${rec}</strong> | Verifying signature of: <strong>${snd}</strong>`;
     }
 
     // Convert ArrayBuffer to Base64 & PEM helpers
@@ -567,31 +689,16 @@
         logEvent(`Generating 4096-bit RSA key pair for ${userName}...`);
 
         try {
-            // Generate RSA-OAEP Key Pair for encryption
             const keyPair = await window.crypto.subtle.generateKey(
-                {
-                    name: "RSA-OAEP",
-                    modulusLength: 4096,
-                    publicExponent: new Uint8Array([1, 0, 1]),
-                    hash: "SHA-256"
-                },
-                true,
-                ["encrypt", "decrypt"]
+                { name: "RSA-OAEP", modulusLength: 4096, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" },
+                true, ["encrypt", "decrypt"]
             );
 
-            // Generate RSA-PSS Key Pair for signature
             const sigKeyPair = await window.crypto.subtle.generateKey(
-                {
-                    name: "RSA-PSS",
-                    modulusLength: 4096,
-                    publicExponent: new Uint8Array([1, 0, 1]),
-                    hash: "SHA-256"
-                },
-                true,
-                ["sign", "verify"]
+                { name: "RSA-PSS", modulusLength: 4096, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" },
+                true, ["sign", "verify"]
             );
 
-            // Export to PEM
             const pubExport = await window.crypto.subtle.exportKey("spki", keyPair.publicKey);
             const privExport = await window.crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
 
@@ -607,10 +714,12 @@
                 privPem: privPem
             };
 
-            document.getElementById(`${userKey}-pub`).value = pubPem;
-            document.getElementById(`${userKey}-priv`).value = privPem;
+            const pubElem = document.getElementById(`${userKey}-pub`);
+            const privElem = document.getElementById(`${userKey}-priv`);
+            if (pubElem) pubElem.value = pubPem;
+            if (privElem) privElem.value = privPem;
 
-            logEvent(`✅ Successfully generated 4096-bit RSA keys for ${userName}.`);
+            logEvent(`✅ Generated 4096-bit RSA key pair for ${userName}.`);
         } catch (err) {
             logEvent(`Error generating keys for ${userName}: ${err.message}`, 'ERROR');
         }
@@ -621,187 +730,236 @@
         await generateUserKeys('userB');
     }
 
-    // Hybrid Encryption (AES-256-GCM + RSA-4096 Key Wrapping)
-    async function performHybridEncryption() {
-        const senderKey = document.getElementById('enc-sender-select').value;
-        const recipientKey = document.getElementById('enc-recipient-select').value;
+    // ================= SPLIT SCREEN DUAL USER LOGIC =================
+    function swapTransferRoles() {
+        const temp = keysStore.splitCurrentSender;
+        keysStore.splitCurrentSender = keysStore.splitCurrentRecipient;
+        keysStore.splitCurrentRecipient = temp;
 
-        const senderName = senderKey === 'userA' ? 'User A' : 'User B';
-        const recipientName = recipientKey === 'userB' ? 'User B' : 'User A';
+        const sndName = keysStore.splitCurrentSender === 'userA' ? 'User A (Sender)' : 'User B (Sender)';
+        const recName = keysStore.splitCurrentRecipient === 'userB' ? 'User B (Recipient)' : 'User A (Recipient)';
 
-        const textData = document.getElementById('enc-input').value.trim();
+        const sndTitle = document.getElementById('sender-title');
+        const recTitle = document.getElementById('recipient-title');
+
+        sndTitle.innerText = `👤 ${sndName}`;
+        sndTitle.className = `user-title ${keysStore.splitCurrentSender === 'userA' ? 'user-a-color' : 'user-b-color'}`;
+
+        recTitle.innerText = `👤 ${recName}`;
+        recTitle.className = `user-title ${keysStore.splitCurrentRecipient === 'userB' ? 'user-b-color' : 'user-a-color'}`;
+
+        document.getElementById('split-recipient-name').value = `${recName} (RSA-4096 Public Key)`;
+
+        // Reset decrypt UI
+        document.getElementById('split-sent-status').style.display = 'none';
+        document.getElementById('split-package-preview').innerText = '[No package received yet. Click "Encrypt & Send" on left panel]';
+        document.getElementById('btn-split-decrypt').disabled = true;
+        document.getElementById('btn-split-decrypt').style.opacity = '0.6';
+        document.getElementById('split-dec-result').style.display = 'none';
+
+        logEvent(`Swapped Roles: Sender = ${keysStore.splitCurrentSender.toUpperCase()}, Recipient = ${keysStore.splitCurrentRecipient.toUpperCase()}`);
+    }
+
+    async function sendSplitPackage() {
+        const sndKey = keysStore.splitCurrentSender;
+        const recKey = keysStore.splitCurrentRecipient;
+        const textData = document.getElementById('split-send-text').value.trim();
+
         if (!textData) {
-            alert('Please enter text to encrypt!');
+            alert('Please type a message to send!');
             return;
         }
 
-        if (!keysStore[senderKey].sigPriv || !keysStore[recipientKey].encPub) {
-            alert(`Keys missing for ${senderName} or ${recipientName}! Initializing keys now...`);
+        if (!keysStore[sndKey].sigPriv || !keysStore[recKey].encPub) {
             await generateAllKeys();
         }
 
-        logEvent(`Starting encryption: Sender = ${senderName}, Recipient = ${recipientName}...`);
+        const sndName = sndKey === 'userA' ? 'User A' : 'User B';
+        const recName = recKey === 'userB' ? 'User B' : 'User A';
+
+        logEvent(`[SplitScreen]: ${sndName} encrypting payload for ${recName} using AES-256-GCM and wrapping AES key with ${recName}'s RSA-4096 Public Key...`);
 
         try {
             // 1. Generate AES-256 Key
             const aesKey = await window.crypto.subtle.generateKey(
-                { name: "AES-GCM", length: 256 },
-                true,
-                ["encrypt", "decrypt"]
+                { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]
             );
 
             // 2. Encrypt Text Payload with AES-GCM
             const iv = window.crypto.getRandomValues(new Uint8Array(12));
             const encoder = new TextEncoder();
             const encryptedContent = await window.crypto.subtle.encrypt(
-                { name: "AES-GCM", iv: iv },
-                aesKey,
-                encoder.encode(textData)
+                { name: "AES-GCM", iv: iv }, aesKey, encoder.encode(textData)
             );
 
-            // 3. Export AES Key & Wrap with Recipient's RSA Public Key
+            // 3. Wrap AES Key with Recipient's RSA Public Key
             const rawAesKey = await window.crypto.subtle.exportKey("raw", aesKey);
             const wrappedAesKey = await window.crypto.subtle.encrypt(
-                { name: "RSA-OAEP" },
-                keysStore[recipientKey].encPub,
-                rawAesKey
+                { name: "RSA-OAEP" }, keysStore[recKey].encPub, rawAesKey
             );
 
-            // 4. Sign Original Content Hash with Sender's Private Key
+            // 4. Sign Payload with Sender's Private Key
             const signature = await window.crypto.subtle.sign(
-                { name: "RSA-PSS", saltLength: 32 },
-                keysStore[senderKey].sigPriv,
-                encoder.encode(textData)
+                { name: "RSA-PSS", saltLength: 32 }, keysStore[sndKey].sigPriv, encoder.encode(textData)
             );
 
-            // Package output
             const packageObj = {
-                sender: senderKey,
-                recipient: recipientKey,
+                sender: sndKey,
+                recipient: recKey,
                 wrappedKey: arrayBufferToBase64(wrappedAesKey),
                 iv: arrayBufferToBase64(iv),
                 ciphertext: arrayBufferToBase64(encryptedContent)
             };
 
-            const packageJson = JSON.stringify(packageObj, null, 2);
-            const sigBase64 = arrayBufferToBase64(signature);
+            keysStore.splitPendingPackage = JSON.stringify(packageObj, null, 2);
+            keysStore.splitPendingSignature = arrayBufferToBase64(signature);
 
-            keysStore.lastEncryptedPackage = packageJson;
-            keysStore.lastSignature = sigBase64;
-            keysStore.lastSender = senderKey;
-            keysStore.lastRecipient = recipientKey;
+            document.getElementById('split-sent-status').style.display = 'block';
 
-            document.getElementById('enc-output-json').value = packageJson;
-            document.getElementById('enc-output-sig').value = sigBase64;
-            document.getElementById('enc-results').style.display = 'block';
+            // Display in Recipient inbox
+            const previewBox = document.getElementById('split-package-preview');
+            previewBox.innerHTML = `📦 <strong>INCOMING ENCRYPTED PACKAGE</strong><br>` +
+                `• Wrapped Key: ${packageObj.wrappedKey.substring(0, 30)}...<br>` +
+                `• IV: ${packageObj.iv}<br>` +
+                `• Ciphertext: ${packageObj.ciphertext.substring(0, 35)}...<br>` +
+                `• Signature: ${keysStore.splitPendingSignature.substring(0, 30)}...`;
 
-            logEvent(`✅ Encrypted payload from ${senderName} to ${recipientName} using AES-256-GCM & RSA-4096.`);
+            // Enable Decrypt button
+            const decBtn = document.getElementById('btn-split-decrypt');
+            decBtn.disabled = false;
+            decBtn.style.opacity = '1';
+
+            logEvent(`✅ [SplitScreen]: Encrypted package transmitted to ${recName}'s inbox!`);
         } catch (err) {
-            logEvent(`Encryption failed: ${err.message}`, 'ERROR');
-            alert(`Encryption failed: ${err.message}`);
+            logEvent(`[SplitScreen] Transmission failed: ${err.message}`, 'ERROR');
+            alert(`Transmission failed: ${err.message}`);
         }
     }
 
-    function copyEncryptedPackage() {
-        if (!keysStore.lastEncryptedPackage) return;
-        document.getElementById('dec-input-json').value = keysStore.lastEncryptedPackage;
-        document.getElementById('dec-input-sig').value = keysStore.lastSignature;
-        
-        // Auto-select corresponding decryptor & sender in decrypt tab
-        if (keysStore.lastRecipient) {
-            document.getElementById('dec-recipient-select').value = keysStore.lastRecipient;
-        }
-        if (keysStore.lastSender) {
-            document.getElementById('dec-sender-select').value = keysStore.lastSender;
-        }
-        updateDecRoleNotice();
-        
-        alert('Copied Encrypted Package and Signature to Decrypt Tab!');
-    }
+    async function decryptSplitPackage() {
+        const recKey = keysStore.splitCurrentRecipient;
+        const sndKey = keysStore.splitCurrentSender;
+        const recName = recKey === 'userB' ? 'User B' : 'User A';
+        const sndName = sndKey === 'userA' ? 'User A' : 'User B';
 
-    // Hybrid Decryption
-    async function performHybridDecryption() {
-        const recipientKey = document.getElementById('dec-recipient-select').value;
-        const senderKey = document.getElementById('dec-sender-select').value;
-
-        const recipientName = recipientKey === 'userB' ? 'User B' : 'User A';
-        const senderName = senderKey === 'userA' ? 'User A' : 'User B';
-
-        const jsonStr = document.getElementById('dec-input-json').value.trim();
-        const sigBase64 = document.getElementById('dec-input-sig').value.trim();
-        const statusBox = document.getElementById('dec-status-box');
-
-        if (!jsonStr) {
-            alert('Please paste Encrypted Package JSON!');
+        if (!keysStore.splitPendingPackage) {
+            alert('No pending encrypted package in recipient inbox!');
             return;
         }
 
-        logEvent(`Starting decryption: Decrypting as ${recipientName}, Verifying signature of ${senderName}...`);
+        logEvent(`[SplitScreen]: ${recName} decrypting package using ${recName}'s RSA-4096 Private Key and verifying ${sndName}'s signature...`);
 
         try {
-            const packageObj = JSON.parse(jsonStr);
+            const packageObj = JSON.parse(keysStore.splitPendingPackage);
             const wrappedKeyBuf = base64ToArrayBuffer(packageObj.wrappedKey);
             const ivBuf = base64ToArrayBuffer(packageObj.iv);
             const ciphertextBuf = base64ToArrayBuffer(packageObj.ciphertext);
 
-            // 1. Unwrap AES Key using Recipient's RSA Private Key
+            // 1. Unwrap AES Key with Recipient's Private Key
             const rawAesKey = await window.crypto.subtle.decrypt(
-                { name: "RSA-OAEP" },
-                keysStore[recipientKey].encPriv,
-                wrappedKeyBuf
+                { name: "RSA-OAEP" }, keysStore[recKey].encPriv, wrappedKeyBuf
             );
 
             // 2. Import AES Key
             const aesKey = await window.crypto.subtle.importKey(
-                "raw",
-                rawAesKey,
-                { name: "AES-GCM" },
-                false,
-                ["decrypt"]
+                "raw", rawAesKey, { name: "AES-GCM" }, false, ["decrypt"]
             );
 
             // 3. Decrypt Ciphertext Payload
             const decryptedBuf = await window.crypto.subtle.decrypt(
-                { name: "AES-GCM", iv: new Uint8Array(ivBuf) },
-                aesKey,
-                ciphertextBuf
+                { name: "AES-GCM", iv: new Uint8Array(ivBuf) }, aesKey, ciphertextBuf
             );
 
-            const decoder = new TextDecoder();
-            const decryptedText = decoder.decode(decryptedBuf);
+            const decryptedText = new TextDecoder().decode(decryptedBuf);
 
-            // 4. Verify Digital Signature with Sender's Public Key
-            let sigVerified = false;
-            if (sigBase64 && keysStore[senderKey].sigPub) {
-                const sigBuf = base64ToArrayBuffer(sigBase64);
-                sigVerified = await window.crypto.subtle.verify(
-                    { name: "RSA-PSS", saltLength: 32 },
-                    keysStore[senderKey].sigPub,
-                    sigBuf,
-                    new TextEncoder().encode(decryptedText)
-                );
+            // 4. Verify Signature with Sender's Public Key
+            const sigBuf = base64ToArrayBuffer(keysStore.splitPendingSignature);
+            const sigVerified = await window.crypto.subtle.verify(
+                { name: "RSA-PSS", saltLength: 32 }, keysStore[sndKey].sigPub, sigBuf, new TextEncoder().encode(decryptedText)
+            );
+
+            const badgeElem = document.getElementById('split-verification-badge');
+            if (sigVerified) {
+                badgeElem.innerHTML = `<div class="alert alert-success">✅ <strong>Verification Success:</strong> Authentic File from ${sndName} (Untampered)</div>`;
+                logEvent(`✅ [SplitScreen]: ${recName} successfully decrypted file. Digital signature of ${sndName} VERIFIED.`);
+            } else {
+                badgeElem.innerHTML = `<div class="alert alert-error">❌ <strong>Verification Failed:</strong> Signature mismatch!</div>`;
+                logEvent(`❌ [SplitScreen]: Signature verification failed for ${sndName}.`, 'WARNING');
+            }
+
+            document.getElementById('split-dec-output').value = decryptedText;
+            document.getElementById('split-dec-result').style.display = 'block';
+
+        } catch (err) {
+            logEvent(`[SplitScreen] Decryption error: ${err.message}`, 'ERROR');
+            alert(`Decryption error: ${err.message}`);
+        }
+    }
+
+    // Manual Encrypt & Decrypt Helpers
+    async function performHybridEncryption() {
+        const sndKey = document.getElementById('enc-sender-select').value;
+        const recKey = document.getElementById('enc-recipient-select').value;
+        const textData = document.getElementById('enc-input').value.trim();
+
+        if (!textData) return alert('Enter text to encrypt!');
+        if (!keysStore[sndKey].sigPriv || !keysStore[recKey].encPub) await generateAllKeys();
+
+        try {
+            const aesKey = await window.crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const encoder = new TextEncoder();
+            const encryptedContent = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, aesKey, encoder.encode(textData));
+
+            const rawAesKey = await window.crypto.subtle.exportKey("raw", aesKey);
+            const wrappedAesKey = await window.crypto.subtle.encrypt({ name: "RSA-OAEP" }, keysStore[recKey].encPub, rawAesKey);
+            const signature = await window.crypto.subtle.sign({ name: "RSA-PSS", saltLength: 32 }, keysStore[sndKey].sigPriv, encoder.encode(textData));
+
+            const packageObj = { wrappedKey: arrayBufferToBase64(wrappedAesKey), iv: arrayBufferToBase64(iv), ciphertext: arrayBufferToBase64(encryptedContent) };
+            document.getElementById('enc-output-json').value = JSON.stringify(packageObj, null, 2);
+            document.getElementById('enc-output-sig').value = arrayBufferToBase64(signature);
+            document.getElementById('enc-results').style.display = 'block';
+
+            logEvent(`Manual Encryption completed: ${sndKey.toUpperCase()} → ${recKey.toUpperCase()}`);
+        } catch (err) {
+            alert(`Encryption error: ${err.message}`);
+        }
+    }
+
+    async function performHybridDecryption() {
+        const recKey = document.getElementById('dec-recipient-select').value;
+        const sndKey = document.getElementById('dec-sender-select').value;
+        const jsonStr = document.getElementById('dec-input-json').value.trim();
+        const sigBase64 = document.getElementById('dec-input-sig').value.trim();
+
+        if (!jsonStr) return alert('Paste JSON package!');
+
+        try {
+            const packageObj = JSON.parse(jsonStr);
+            const rawAesKey = await window.crypto.subtle.decrypt({ name: "RSA-OAEP" }, keysStore[recKey].encPriv, base64ToArrayBuffer(packageObj.wrappedKey));
+            const aesKey = await window.crypto.subtle.importKey("raw", rawAesKey, { name: "AES-GCM" }, false, ["decrypt"]);
+            const decryptedBuf = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: new Uint8Array(base64ToArrayBuffer(packageObj.iv)) }, aesKey, base64ToArrayBuffer(packageObj.ciphertext));
+            const decryptedText = new TextDecoder().decode(decryptedBuf);
+
+            let verified = false;
+            if (sigBase64 && keysStore[sndKey].sigPub) {
+                verified = await window.crypto.subtle.verify({ name: "RSA-PSS", saltLength: 32 }, keysStore[sndKey].sigPub, base64ToArrayBuffer(sigBase64), new TextEncoder().encode(decryptedText));
             }
 
             document.getElementById('dec-output-text').value = decryptedText;
             document.getElementById('dec-results').style.display = 'block';
+            document.getElementById('dec-status-box').innerHTML = verified ?
+                `<div class="alert alert-success">✅ File Decrypted & Signature Verified for ${sndKey.toUpperCase()}!</div>` :
+                `<div class="alert alert-error">⚠️ Decrypted, but Signature Verification Failed!</div>`;
 
-            if (sigVerified) {
-                statusBox.innerHTML = `<div class="alert alert-success">✅ <strong>Success:</strong> File Decrypted by ${recipientName} & Signature VERIFIED for ${senderName}!</div>`;
-                logEvent(`✅ Decryption successful by ${recipientName}. Signature of ${senderName} verified.`);
-            } else {
-                statusBox.innerHTML = `<div class="alert alert-error">⚠️ <strong>Warning:</strong> File Decrypted, but Signature Verification Failed for ${senderName}!</div>`;
-                logEvent(`⚠️ Decryption successful, but signature check failed for ${senderName}.`, 'WARNING');
-            }
-
+            logEvent(`Manual Decryption completed by ${recKey.toUpperCase()}`);
         } catch (err) {
-            statusBox.innerHTML = `<div class="alert alert-error">❌ <strong>Decryption Failed:</strong> ${err.message}</div>`;
-            logEvent(`Decryption failed: ${err.message}`, 'ERROR');
+            alert(`Decryption error: ${err.message}`);
         }
     }
 
-    // Initialize keys on load
     window.addEventListener('DOMContentLoaded', () => {
-        logEvent('Initializing Digital Secure File Sharing Web Portal...');
+        logEvent('Initializing Digital Secure File Sharing Web Portal with Split-Screen View...');
         generateAllKeys();
     });
 </script>
