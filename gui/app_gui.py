@@ -17,8 +17,8 @@ class SecureFileSharingGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Digital Secure File Sharing (RSA-4096 + AES-256)")
-        self.root.geometry("850x650")
-        self.root.minsize(750, 550)
+        self.root.geometry("850x700")
+        self.root.minsize(750, 600)
 
         # Style configuration
         self.style = ttk.Style()
@@ -160,30 +160,56 @@ class SecureFileSharingGUI:
         frame = ttk.LabelFrame(self.tab_encrypt, text=" Hybrid File Encryption & Digital Signature ")
         frame.pack(fill="both", expand=True, padx=15, pady=15)
 
+        # Dynamic User Selection: Sender and Recipient
+        tk.Label(frame, text="Sender User (Signs Payload):", bg=self.bg_color, fg=self.fg_color).grid(row=0, column=0, sticky="w", padx=15, pady=8)
+        self.combo_enc_sender = ttk.Combobox(frame, values=["User A", "User B"], state="readonly", width=18)
+        self.combo_enc_sender.set("User A")
+        self.combo_enc_sender.grid(row=0, column=1, sticky="w", padx=5, pady=8)
+        self.combo_enc_sender.bind("<<ComboboxSelected>>", self._on_enc_role_changed)
+
+        tk.Label(frame, text="Recipient User (Encrypts For):", bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0, sticky="w", padx=15, pady=8)
+        self.combo_enc_recipient = ttk.Combobox(frame, values=["User B", "User A"], state="readonly", width=18)
+        self.combo_enc_recipient.set("User B")
+        self.combo_enc_recipient.grid(row=1, column=1, sticky="w", padx=5, pady=8)
+        self.combo_enc_recipient.bind("<<ComboboxSelected>>", self._on_enc_role_changed)
+
         # File Selection
-        tk.Label(frame, text="Target File to Encrypt:", bg=self.bg_color, fg=self.fg_color).grid(row=0, column=0, sticky="w", padx=15, pady=8)
+        tk.Label(frame, text="Target File to Encrypt:", bg=self.bg_color, fg=self.fg_color).grid(row=2, column=0, sticky="w", padx=15, pady=8)
         self.entry_enc_file = ttk.Entry(frame, width=50)
         self.entry_enc_file.insert(0, os.path.join(FILES_DIR, "sample.txt"))
-        self.entry_enc_file.grid(row=0, column=1, padx=5, pady=8)
-        ttk.Button(frame, text="Browse...", command=self.browse_enc_file).grid(row=0, column=2, padx=5, pady=8)
+        self.entry_enc_file.grid(row=2, column=1, padx=5, pady=8)
+        ttk.Button(frame, text="Browse...", command=self.browse_enc_file).grid(row=2, column=2, padx=5, pady=8)
 
-        # Recipient Public Key
-        tk.Label(frame, text="Recipient Public Key (User B):", bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0, sticky="w", padx=15, pady=8)
+        # Recipient Public Key Path
+        tk.Label(frame, text="Recipient Public Key (.pem):", bg=self.bg_color, fg=self.fg_color).grid(row=3, column=0, sticky="w", padx=15, pady=8)
         self.entry_rec_pubkey = ttk.Entry(frame, width=50)
         self.entry_rec_pubkey.insert(0, get_user_keys_paths("user_b")[1])
-        self.entry_rec_pubkey.grid(row=1, column=1, padx=5, pady=8)
-        ttk.Button(frame, text="Browse...", command=self.browse_rec_pubkey).grid(row=1, column=2, padx=5, pady=8)
+        self.entry_rec_pubkey.grid(row=3, column=1, padx=5, pady=8)
+        ttk.Button(frame, text="Browse...", command=self.browse_rec_pubkey).grid(row=3, column=2, padx=5, pady=8)
 
-        # Sender Private Key
-        tk.Label(frame, text="Sender Private Key (User A):", bg=self.bg_color, fg=self.fg_color).grid(row=2, column=0, sticky="w", padx=15, pady=8)
+        # Sender Private Key Path
+        tk.Label(frame, text="Sender Private Key (.pem):", bg=self.bg_color, fg=self.fg_color).grid(row=4, column=0, sticky="w", padx=15, pady=8)
         self.entry_snd_privkey = ttk.Entry(frame, width=50)
         self.entry_snd_privkey.insert(0, get_user_keys_paths("user_a")[0])
-        self.entry_snd_privkey.grid(row=2, column=1, padx=5, pady=8)
-        ttk.Button(frame, text="Browse...", command=self.browse_snd_privkey).grid(row=2, column=2, padx=5, pady=8)
+        self.entry_snd_privkey.grid(row=4, column=1, padx=5, pady=8)
+        ttk.Button(frame, text="Browse...", command=self.browse_snd_privkey).grid(row=4, column=2, padx=5, pady=8)
 
         # Submit Action
         btn_encrypt = ttk.Button(frame, text="🔒 Encrypt & Sign File", command=self.perform_encryption)
-        btn_encrypt.grid(row=3, column=0, columnspan=3, pady=25)
+        btn_encrypt.grid(row=5, column=0, columnspan=3, pady=20)
+
+    def _on_enc_role_changed(self, event=None):
+        sender = self.combo_enc_sender.get().lower().replace(" ", "_")
+        recipient = self.combo_enc_recipient.get().lower().replace(" ", "_")
+
+        snd_priv, _ = get_user_keys_paths(sender)
+        _, rec_pub = get_user_keys_paths(recipient)
+
+        self.entry_snd_privkey.delete(0, tk.END)
+        self.entry_snd_privkey.insert(0, snd_priv)
+
+        self.entry_rec_pubkey.delete(0, tk.END)
+        self.entry_rec_pubkey.insert(0, rec_pub)
 
     def browse_enc_file(self):
         f = filedialog.askopenfilename(initialdir=FILES_DIR)
@@ -208,6 +234,9 @@ class SecureFileSharingGUI:
         rec_pub = self.entry_rec_pubkey.get()
         snd_priv = self.entry_snd_privkey.get()
 
+        sender_name = self.combo_enc_sender.get()
+        recipient_name = self.combo_enc_recipient.get()
+
         out_bin = os.path.join(FILES_DIR, "encrypted.bin")
         out_sig = os.path.join(FILES_DIR, "signature.sig")
 
@@ -215,23 +244,25 @@ class SecureFileSharingGUI:
             messagebox.showerror("Error", "Target input file does not exist!")
             return
         if not os.path.exists(rec_pub):
-            messagebox.showerror("Error", "Recipient public key PEM file not found!")
+            messagebox.showerror("Error", f"Recipient ({recipient_name}) public key PEM file not found!")
             return
         if not os.path.exists(snd_priv):
-            messagebox.showerror("Error", "Sender private key PEM file not found!")
+            messagebox.showerror("Error", f"Sender ({sender_name}) private key PEM file not found!")
             return
 
         def task():
             try:
-                self.status_var.set("Encrypting file with AES-256-GCM and wrapping key with RSA-4096...")
+                self.status_var.set(f"Encrypting file from {sender_name} to {recipient_name}...")
                 encrypt_file(in_file, out_bin, rec_pub)
                 
-                self.status_var.set("Signing file with SHA-256 + RSA-PSS...")
+                self.status_var.set(f"Signing file with {sender_name}'s private key...")
                 sign_file(in_file, snd_priv, out_sig)
 
                 self.status_var.set("Encryption & Signature Complete.")
                 msg = (
                     f"✅ File Encrypted & Signed Successfully!\n\n"
+                    f"Sender: {sender_name}\n"
+                    f"Recipient: {recipient_name}\n"
                     f"Encrypted File: {out_bin}\n"
                     f"Digital Signature: {out_sig}"
                 )
@@ -248,37 +279,63 @@ class SecureFileSharingGUI:
         frame = ttk.LabelFrame(self.tab_decrypt, text=" File Decryption & Signature Verification ")
         frame.pack(fill="both", expand=True, padx=15, pady=15)
 
+        # Dynamic User Selection: Recipient and Sender
+        tk.Label(frame, text="Recipient User (Decryptor):", bg=self.bg_color, fg=self.fg_color).grid(row=0, column=0, sticky="w", padx=15, pady=8)
+        self.combo_dec_recipient = ttk.Combobox(frame, values=["User B", "User A"], state="readonly", width=18)
+        self.combo_dec_recipient.set("User B")
+        self.combo_dec_recipient.grid(row=0, column=1, sticky="w", padx=5, pady=8)
+        self.combo_dec_recipient.bind("<<ComboboxSelected>>", self._on_dec_role_changed)
+
+        tk.Label(frame, text="Sender User (Signer to Verify):", bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0, sticky="w", padx=15, pady=8)
+        self.combo_dec_sender = ttk.Combobox(frame, values=["User A", "User B"], state="readonly", width=18)
+        self.combo_dec_sender.set("User A")
+        self.combo_dec_sender.grid(row=1, column=1, sticky="w", padx=5, pady=8)
+        self.combo_dec_sender.bind("<<ComboboxSelected>>", self._on_dec_role_changed)
+
         # Encrypted File
-        tk.Label(frame, text="Encrypted File (.bin):", bg=self.bg_color, fg=self.fg_color).grid(row=0, column=0, sticky="w", padx=15, pady=8)
+        tk.Label(frame, text="Encrypted File (.bin):", bg=self.bg_color, fg=self.fg_color).grid(row=2, column=0, sticky="w", padx=15, pady=8)
         self.entry_dec_file = ttk.Entry(frame, width=50)
         self.entry_dec_file.insert(0, os.path.join(FILES_DIR, "encrypted.bin"))
-        self.entry_dec_file.grid(row=0, column=1, padx=5, pady=8)
-        ttk.Button(frame, text="Browse...", command=self.browse_dec_file).grid(row=0, column=2, padx=5, pady=8)
+        self.entry_dec_file.grid(row=2, column=1, padx=5, pady=8)
+        ttk.Button(frame, text="Browse...", command=self.browse_dec_file).grid(row=2, column=2, padx=5, pady=8)
 
         # Signature File
-        tk.Label(frame, text="Digital Signature (.sig):", bg=self.bg_color, fg=self.fg_color).grid(row=1, column=0, sticky="w", padx=15, pady=8)
+        tk.Label(frame, text="Digital Signature (.sig):", bg=self.bg_color, fg=self.fg_color).grid(row=3, column=0, sticky="w", padx=15, pady=8)
         self.entry_sig_file = ttk.Entry(frame, width=50)
         self.entry_sig_file.insert(0, os.path.join(FILES_DIR, "signature.sig"))
-        self.entry_sig_file.grid(row=1, column=1, padx=5, pady=8)
-        ttk.Button(frame, text="Browse...", command=self.browse_sig_file).grid(row=1, column=2, padx=5, pady=8)
+        self.entry_sig_file.grid(row=3, column=1, padx=5, pady=8)
+        ttk.Button(frame, text="Browse...", command=self.browse_sig_file).grid(row=3, column=2, padx=5, pady=8)
 
         # Recipient Private Key
-        tk.Label(frame, text="Recipient Private Key (User B):", bg=self.bg_color, fg=self.fg_color).grid(row=2, column=0, sticky="w", padx=15, pady=8)
+        tk.Label(frame, text="Recipient Private Key (.pem):", bg=self.bg_color, fg=self.fg_color).grid(row=4, column=0, sticky="w", padx=15, pady=8)
         self.entry_rec_privkey = ttk.Entry(frame, width=50)
         self.entry_rec_privkey.insert(0, get_user_keys_paths("user_b")[0])
-        self.entry_rec_privkey.grid(row=2, column=1, padx=5, pady=8)
-        ttk.Button(frame, text="Browse...", command=self.browse_rec_privkey).grid(row=2, column=2, padx=5, pady=8)
+        self.entry_rec_privkey.grid(row=4, column=1, padx=5, pady=8)
+        ttk.Button(frame, text="Browse...", command=self.browse_rec_privkey).grid(row=4, column=2, padx=5, pady=8)
 
         # Sender Public Key
-        tk.Label(frame, text="Sender Public Key (User A):", bg=self.bg_color, fg=self.fg_color).grid(row=3, column=0, sticky="w", padx=15, pady=8)
+        tk.Label(frame, text="Sender Public Key (.pem):", bg=self.bg_color, fg=self.fg_color).grid(row=5, column=0, sticky="w", padx=15, pady=8)
         self.entry_snd_pubkey = ttk.Entry(frame, width=50)
         self.entry_snd_pubkey.insert(0, get_user_keys_paths("user_a")[1])
-        self.entry_snd_pubkey.grid(row=3, column=1, padx=5, pady=8)
-        ttk.Button(frame, text="Browse...", command=self.browse_snd_pubkey).grid(row=3, column=2, padx=5, pady=8)
+        self.entry_snd_pubkey.grid(row=5, column=1, padx=5, pady=8)
+        ttk.Button(frame, text="Browse...", command=self.browse_snd_pubkey).grid(row=5, column=2, padx=5, pady=8)
 
         # Submit Action
         btn_decrypt = ttk.Button(frame, text="🔓 Decrypt & Verify Signature", command=self.perform_decryption)
-        btn_decrypt.grid(row=4, column=0, columnspan=3, pady=15)
+        btn_decrypt.grid(row=6, column=0, columnspan=3, pady=15)
+
+    def _on_dec_role_changed(self, event=None):
+        recipient = self.combo_dec_recipient.get().lower().replace(" ", "_")
+        sender = self.combo_dec_sender.get().lower().replace(" ", "_")
+
+        rec_priv, _ = get_user_keys_paths(recipient)
+        _, snd_pub = get_user_keys_paths(sender)
+
+        self.entry_rec_privkey.delete(0, tk.END)
+        self.entry_rec_privkey.insert(0, rec_priv)
+
+        self.entry_snd_pubkey.delete(0, tk.END)
+        self.entry_snd_pubkey.insert(0, snd_pub)
 
     def browse_dec_file(self):
         f = filedialog.askopenfilename(filetypes=[("Binary Files", "*.bin"), ("All Files", "*.*")])
@@ -310,28 +367,31 @@ class SecureFileSharingGUI:
         rec_priv = self.entry_rec_privkey.get()
         snd_pub = self.entry_snd_pubkey.get()
 
+        recipient_name = self.combo_dec_recipient.get()
+        sender_name = self.combo_dec_sender.get()
+
         out_dec = os.path.join(FILES_DIR, "decrypted.txt")
 
         if not os.path.exists(enc_file):
             messagebox.showerror("Error", "Encrypted file (.bin) not found!")
             return
         if not os.path.exists(rec_priv):
-            messagebox.showerror("Error", "Recipient private key PEM file not found!")
+            messagebox.showerror("Error", f"Recipient ({recipient_name}) private key PEM file not found!")
             return
 
         def task():
             try:
-                self.status_var.set("Decrypting AES-256 payload using RSA-4096 private key...")
+                self.status_var.set(f"Decrypting AES-256 payload as {recipient_name}...")
                 decrypt_file(enc_file, out_dec, rec_priv)
 
                 sig_verified = False
                 if os.path.exists(sig_file) and os.path.exists(snd_pub):
-                    self.status_var.set("Verifying RSA-PSS digital signature...")
+                    self.status_var.set(f"Verifying signature against {sender_name}'s public key...")
                     sig_verified = verify_signature(out_dec, sig_file, snd_pub)
 
                 self.status_var.set("Decryption complete.")
 
-                status_msg = "✅ Signature Verified: Authentic & Untampered File" if sig_verified else "⚠️ Signature Verification Failed or Signature File Missing!"
+                status_msg = f"✅ Signature Verified: Authentic file from {sender_name}" if sig_verified else f"⚠️ Signature Verification Failed for {sender_name} or file missing!"
                 
                 # Preview text content
                 preview = ""
@@ -340,7 +400,7 @@ class SecureFileSharingGUI:
                         preview = f.read(300)
 
                 msg = (
-                    f"🔓 File Decrypted Successfully!\n\n"
+                    f"🔓 File Decrypted Successfully by {recipient_name}!\n\n"
                     f"Saved to: {out_dec}\n"
                     f"Status: {status_msg}\n\n"
                     f"Content Preview:\n----------------\n{preview}"
@@ -361,7 +421,7 @@ class SecureFileSharingGUI:
         frame = ttk.LabelFrame(self.tab_logs, text=" Real-time Security Event Audit Log ")
         frame.pack(fill="both", expand=True, padx=15, pady=15)
 
-        self.log_text = scrolledtext.ScrolledText(frame, bg="#11111b", fg="#a6adc8", font=("Consolas", 10), wrap="word")
+        self.log_text = scrolledtext.ScrolledText(frame, bg="#11111b", fg="#a6adc8", font=("Consolas", 10), wrap="none")
         self.log_text.pack(fill="both", expand=True, padx=10, pady=10)
 
         btn_refresh = ttk.Button(frame, text="🔄 Refresh Log View", command=self.refresh_logs)
@@ -371,9 +431,13 @@ class SecureFileSharingGUI:
     def refresh_logs(self):
         if os.path.exists(LOG_FILE):
             with open(LOG_FILE, "r", encoding="utf-8", errors="ignore") as f:
-                content = f.read()
+                lines = f.readlines()
+            
+            # Format lines to ensure every entry is on a distinct separate line
+            clean_content = "".join([line.strip() + "\n" for line in lines if line.strip()])
+            
             self.log_text.delete("1.0", tk.END)
-            self.log_text.insert(tk.END, content)
+            self.log_text.insert(tk.END, clean_content)
             self.log_text.see(tk.END)
 
 def launch_gui():
